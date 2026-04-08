@@ -89,6 +89,92 @@ To automate IAM resource provisioning using **CloudFormation** and manage infras
 
 ---
 
+### ▶️ Lab 2: Setup and Run Procedure
+
+Follow this procedure to deploy and validate Lab 2 in your own AWS account.
+
+#### 1. Fork the repository
+
+Fork this repository to your own GitHub account:
+
+https://github.com/bankah-junior/BEM10-IAM_IaC_Automation_Tools.git
+
+#### 2. Prepare AWS credentials
+
+Create or use an IAM user/access key pair with permissions for:
+
+* CloudFormation stack create/update
+* IAM user/group/policy management
+* Secrets Manager create/read
+
+Collect:
+
+* AWS Access Key ID
+* AWS Secret Access Key
+
+#### 3. Add GitHub repository secrets
+
+In your forked repository, go to:
+
+Settings → Secrets and variables → Actions → Repository secrets
+
+Add these secrets exactly:
+
+* `AWS_ACCESS_KEY_ID`
+* `AWS_SECRET_ACCESS_KEY`
+
+#### 4. Confirm AWS region in workflow
+
+Open `.github/workflows/deploy.yml` and verify `aws-region` matches the region where you want to deploy resources.
+
+#### 5. Trigger deployment
+
+Push changes to the `lab2` branch (the workflow is configured to run on this branch).
+
+Wait for a successful run in GitHub Actions.
+
+#### 6. Retrieve IAM users and temporary password
+
+After deployment succeeds:
+
+* Open AWS IAM and confirm users:
+
+  * `ec2-user1`
+  * `ec2-user2`
+  * `s3-user`
+
+* Open AWS Secrets Manager and retrieve the secret named `lab-user-temp-password`.
+
+#### 7. Sign in and reset password
+
+Sign in as each IAM user with the temporary password, then reset the password when prompted.
+
+#### 8. Validate permissions
+
+Test each user in AWS Console:
+
+* EC2 users should be able to view EC2 and launch instances (based on policy scope)
+* S3 user should be able to list S3 buckets
+
+#### 9. Expected access boundaries
+
+Expected least-privilege outcomes:
+
+* `ec2-user1` and `ec2-user2` cannot list S3 buckets
+* `s3-user` cannot view EC2 instances
+
+#### 10. Compare with sample outputs
+
+Use screenshots in `Lab2/screenshots` as reference outputs for success/failure validation.
+
+#### Important notes
+
+* If deployment fails in GitHub Actions, check workflow logs first for CloudFormation validation errors.
+* If IAM users fail password reset, verify your account password policy and use a compliant new password.
+* If permissions appear unchanged, confirm the stack update completed and re-login to refresh session policy context.
+
+---
+
 ### 🏗️ Architecture Overview
 
 This lab provisions:
