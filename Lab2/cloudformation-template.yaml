@@ -18,6 +18,21 @@ Resources:
         ExcludeCharacters: '"@/\\'
 
   # -----------------------------
+  # IAM Account Password Policy
+  # -----------------------------
+  AccountPasswordPolicy:
+    Type: AWS::IAM::AccountPasswordPolicy
+    Properties:
+      MinimumPasswordLength: 12
+      RequireSymbols: true
+      RequireNumbers: true
+      RequireUppercaseCharacters: true
+      RequireLowercaseCharacters: true
+      AllowUsersToChangePassword: true
+      PasswordReusePrevention: 3
+      MaxPasswordAge: 90
+
+  # -----------------------------
   # IAM Groups
   # -----------------------------
   S3Group:
