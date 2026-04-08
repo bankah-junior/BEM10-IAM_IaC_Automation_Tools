@@ -2,112 +2,112 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: Lab 2 - IAM Automation with Groups, Users, and Secrets
 
 Resources:
-	# -----------------------------
-	# Secrets Manager: Store Temp Password
-	# -----------------------------
-	UserTempPassword:
-		Type: AWS::SecretsManager::Secret
-		Properties:
-			Name: lab-user-temp-password
-			Description: Temporary password for IAM users
-			GenerateSecretString:
-				PasswordLength: 12
-				ExcludeCharacters: '"@/'
+  # -----------------------------
+  # Secrets Manager: Store Temp Password
+  # -----------------------------
+  UserTempPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: lab-user-temp-password
+      Description: Temporary password for IAM users
+      GenerateSecretString:
+        PasswordLength: 12
+        ExcludeCharacters: '"@/'
 
-	# -----------------------------
-	# IAM Groups
-	# -----------------------------
-	S3Group:
-		Type: AWS::IAM::Group
-		Properties:
-			GroupName: S3Group
-			Policies:
-				- PolicyName: S3ListPolicy
-					PolicyDocument:
-						Version: "2012-10-17"
-						Statement:
-							- Effect: Allow
-								Action:
-									- s3:ListAllMyBuckets
-								Resource: "*"
+  # -----------------------------
+  # IAM Groups
+  # -----------------------------
+  S3Group:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: S3Group
+      Policies:
+        - PolicyName: S3ListPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:ListAllMyBuckets
+                Resource: "*"
 
-	EC2Group:
-		Type: AWS::IAM::Group
-		Properties:
-			GroupName: EC2Group
-			Policies:
-				- PolicyName: EC2AccessPolicy
-					PolicyDocument:
-						Version: "2012-10-17"
-						Statement:
-							- Effect: Allow
-								Action:
-									- ec2:DescribeInstances
-									- ec2:RunInstances
-								Resource: "*"
+  EC2Group:
+    Type: AWS::IAM::Group
+    Properties:
+      GroupName: EC2Group
+      Policies:
+        - PolicyName: EC2AccessPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeInstances
+                  - ec2:RunInstances
+                Resource: "*"
 
-	# -----------------------------
-	# IAM Users
-	# -----------------------------
-	EC2User1:
-		Type: AWS::IAM::User
-		Properties:
-			UserName: ec2-user1
+  # -----------------------------
+  # IAM Users
+  # -----------------------------
+  EC2User1:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: ec2-user1
 
-	EC2User2:
-		Type: AWS::IAM::User
-		Properties:
-			UserName: ec2-user2
+  EC2User2:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: ec2-user2
 
-	S3User:
-		Type: AWS::IAM::User
-		Properties:
-			UserName: s3-user
+  S3User:
+    Type: AWS::IAM::User
+    Properties:
+      UserName: s3-user
 
-	# -----------------------------
-	# Group Memberships
-	# -----------------------------
-	EC2User1Group:
-		Type: AWS::IAM::UserToGroupAddition
-		Properties:
-			GroupName: !Ref EC2Group
-			Users:
-				- !Ref EC2User1
+  # -----------------------------
+  # Group Memberships
+  # -----------------------------
+  EC2User1Group:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref EC2Group
+      Users:
+        - !Ref EC2User1
 
-	EC2User2Group:
-		Type: AWS::IAM::UserToGroupAddition
-		Properties:
-			GroupName: !Ref EC2Group
-			Users:
-				- !Ref EC2User2
+  EC2User2Group:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref EC2Group
+      Users:
+        - !Ref EC2User2
 
-	S3UserGroup:
-		Type: AWS::IAM::UserToGroupAddition
-		Properties:
-			GroupName: !Ref S3Group
-			Users:
-				- !Ref S3User
+  S3UserGroup:
+    Type: AWS::IAM::UserToGroupAddition
+    Properties:
+      GroupName: !Ref S3Group
+      Users:
+        - !Ref S3User
 
-	# -----------------------------
-	# Login Profiles (Console Access)
-	# -----------------------------
-	EC2User1Login:
-		Type: AWS::IAM::UserLoginProfile
-		Properties:
-			UserName: !Ref EC2User1
-			Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-			PasswordResetRequired: true
+  # -----------------------------
+  # Login Profiles (Console Access)
+  # -----------------------------
+  EC2User1Login:
+    Type: AWS::IAM::UserLoginProfile
+    Properties:
+      UserName: !Ref EC2User1
+      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+      PasswordResetRequired: true
 
-	EC2User2Login:
-		Type: AWS::IAM::UserLoginProfile
-		Properties:
-			UserName: !Ref EC2User2
-			Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-			PasswordResetRequired: true
+  EC2User2Login:
+    Type: AWS::IAM::UserLoginProfile
+    Properties:
+      UserName: !Ref EC2User2
+      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+      PasswordResetRequired: true
 
-	S3UserLogin:
-		Type: AWS::IAM::UserLoginProfile
-		Properties:
-			UserName: !Ref S3User
-			Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-			PasswordResetRequired: true
+  S3UserLogin:
+    Type: AWS::IAM::UserLoginProfile
+    Properties:
+      UserName: !Ref S3User
+      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+      PasswordResetRequired: true
