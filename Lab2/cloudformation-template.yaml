@@ -19,10 +19,24 @@ Resources:
   # -----------------------------
   # IAM Groups
   # -----------------------------
+  PasswordChangePolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: AllowUserToChangePassword
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - iam:ChangePassword
+            Resource: "*"
+
   S3Group:
     Type: AWS::IAM::Group
     Properties:
       GroupName: S3Group
+      ManagedPolicyArns:
+        - !Ref PasswordChangePolicy
       Policies:
         - PolicyName: S3ListPolicy
           PolicyDocument:
@@ -37,6 +51,8 @@ Resources:
     Type: AWS::IAM::Group
     Properties:
       GroupName: EC2Group
+      ManagedPolicyArns:
+        - !Ref PasswordChangePolicy
       Policies:
         - PolicyName: EC2AccessPolicy
           PolicyDocument:
