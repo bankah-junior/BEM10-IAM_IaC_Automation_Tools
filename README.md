@@ -194,22 +194,35 @@ Each IAM user was tested for access:
 ## 📂 Repository Structure
 
 ```
-├── 📁 Lab 1
-│   ├── 📁 Task 1
+├── 📁 .github
+│   └── 📁 workflows
+│       └── ⚙️ deploy.yml
+├── 📁 Lab1
+│   ├── 📁 Task1
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_1.png
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_2.png
 │   │   └── 📝 Note.md
-│   ├── 📁 Task 2
+│   ├── 📁 Task2
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_3.png
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_4.png
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_5.png
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_6.png
 │   │   ├── 🖼️ Anthony_Bekoe_Bankah_Image_7.png
 │   │   └── 📝 Note.md
-│   └── 📁 Task 3
+│   └── 📁 Task3
 │       ├── 🖼️ Anthony_Bekoe_Bankah_Image_8.png
 │       └── 📝 Note.md
-├── 📁 Lab 2
+├── 📁 Lab2
+│   ├── 📁 screenshots
+│   │   ├── 🖼️ ec2-user1_failure.png
+│   │   ├── 🖼️ ec2-user1_success.png
+│   │   ├── 🖼️ ec2-user2_failure.png
+│   │   ├── 🖼️ ec2-user2_success.png
+│   │   ├── 🖼️ s3-user_failure.png
+│   │   └── 🖼️ s3-user_success.png
+│   ├── 📝 architecture.md
+│   └── ⚙️ cloudformation-template.yaml
+├── 📝 IAMLoginError.md
 └── 📝 README.md
 ```
 
