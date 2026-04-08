@@ -13,9 +13,8 @@ Resources:
       GenerateSecretString:
         SecretStringTemplate: '{"password":""}'
         GenerateStringKey: password
-        PasswordLength: 20
+        PasswordLength: 16
         RequireEachIncludedType: true
-        ExcludeCharacters: '"@/\\'
 
   # -----------------------------
   # IAM Groups
@@ -47,6 +46,11 @@ Resources:
                 Action:
                   - ec2:DescribeInstances
                   - ec2:RunInstances
+                  - ec2:DescribeImages
+                  - ec2:DescribeKeyPairs
+                  - ec2:DescribeSecurityGroups
+                  - ec2:DescribeSubnets
+                  - ec2:CreateTags
                 Resource: "*"
 
   # -----------------------------
