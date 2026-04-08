@@ -11,8 +11,9 @@ Resources:
       Name: lab-user-temp-password
       Description: Temporary password for IAM users
       GenerateSecretString:
-        PasswordLength: 12
-        ExcludeCharacters: '"@/'
+        PasswordLength: 20
+        RequireEachIncludedType: true
+        ExcludeCharacters: '"@/\\'
 
   # -----------------------------
   # IAM Groups
