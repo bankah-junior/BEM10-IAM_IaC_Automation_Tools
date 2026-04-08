@@ -11,6 +11,8 @@ Resources:
       Name: lab-user-temp-password
       Description: Temporary password for IAM users
       GenerateSecretString:
+        SecretStringTemplate: '{"password":""}'
+        GenerateStringKey: password
         PasswordLength: 20
         RequireEachIncludedType: true
         ExcludeCharacters: '"@/\\'
@@ -55,7 +57,7 @@ Resources:
     Properties:
       UserName: ec2-user1
       LoginProfile:
-        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
 
   EC2User2:
@@ -63,7 +65,7 @@ Resources:
     Properties:
       UserName: ec2-user2
       LoginProfile:
-        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
 
   S3User:
@@ -71,7 +73,7 @@ Resources:
     Properties:
       UserName: s3-user
       LoginProfile:
-        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
 
   # -----------------------------
