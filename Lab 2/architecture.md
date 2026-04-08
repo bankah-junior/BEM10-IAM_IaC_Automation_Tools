@@ -252,16 +252,7 @@ This architecture can scale by:
 
 ---
 
-## 🚀 10. Future Improvements
-
-* Replace IAM Users with **IAM Roles + Federation**
-* Enforce **MFA for all users**
-* Add **CloudTrail logging & monitoring**
-* Implement **CI/CD pipeline for auto deployment**
-
----
-
-## 🧠 11. Key Takeaways
+## 🧠 10. Key Takeaways
 
 * IAM Groups enable scalable access control
 * CloudFormation ensures consistent infrastructure
@@ -273,6 +264,5 @@ This architecture can scale by:
 ## 👨‍💻 Author
 
 **Anthony Bekoe Bankah**
-Cloud & Backend Engineer | AWS Enthusiast
 
 ---
