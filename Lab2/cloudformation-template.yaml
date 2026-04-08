@@ -53,16 +53,25 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: ec2-user1
+      LoginProfile:
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        PasswordResetRequired: true
 
   EC2User2:
     Type: AWS::IAM::User
     Properties:
       UserName: ec2-user2
+      LoginProfile:
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        PasswordResetRequired: true
 
   S3User:
     Type: AWS::IAM::User
     Properties:
       UserName: s3-user
+      LoginProfile:
+        Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
+        PasswordResetRequired: true
 
   # -----------------------------
   # Group Memberships
@@ -88,26 +97,3 @@ Resources:
       Users:
         - !Ref S3User
 
-  # -----------------------------
-  # Login Profiles (Console Access)
-  # -----------------------------
-  EC2User1Login:
-    Type: AWS::IAM::UserLoginProfile
-    Properties:
-      UserName: !Ref EC2User1
-      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-      PasswordResetRequired: true
-
-  EC2User2Login:
-    Type: AWS::IAM::UserLoginProfile
-    Properties:
-      UserName: !Ref EC2User2
-      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-      PasswordResetRequired: true
-
-  S3UserLogin:
-    Type: AWS::IAM::UserLoginProfile
-    Properties:
-      UserName: !Ref S3User
-      Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString}}"
-      PasswordResetRequired: true
