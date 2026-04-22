@@ -1,15 +1,25 @@
 AWSTemplateFormatVersion: "2010-09-09"
-Description: Lab 2 - IAM Automation with Groups, Users, and Secrets
+Description: Lab 2 - IAM Automation with Permissions Boundary for EC2 User 2
 
 Resources:
   # -----------------------------
-  # Secrets Manager: Store Temp Password
+  # Secrets Manager: Auto-generate 16-character password
   # -----------------------------
   UserTempPassword:
+    Type: AWS::IAM::ManagedPolicy # Helper policy for password changes
+    Properties:
+      ManagedPolicyName: AllowPasswordChange
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action: iam:ChangePassword
+            Resource: "*"
+
+  SharedSecret:
     Type: AWS::SecretsManager::Secret
     Properties:
       Name: lab-user-temp-password
-      Description: Temporary password for IAM users
       GenerateSecretString:
         SecretStringTemplate: '{"password":""}'
         GenerateStringKey: password
@@ -17,34 +27,37 @@ Resources:
         RequireEachIncludedType: true
 
   # -----------------------------
-  # IAM Groups
+  # Permissions Boundary
   # -----------------------------
-  PasswordChangePolicy:
+  EC2ViewOnlyBoundary:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      ManagedPolicyName: AllowUserToChangePassword
+      ManagedPolicyName: EC2ViewOnlyBoundary
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
           - Effect: Allow
             Action:
+              - ec2:Describe*
               - iam:ChangePassword
             Resource: "*"
 
+  # -----------------------------
+  # IAM Groups
+  # -----------------------------
   S3Group:
     Type: AWS::IAM::Group
     Properties:
       GroupName: S3Group
       ManagedPolicyArns:
-        - !Ref PasswordChangePolicy
+        - !Ref UserTempPassword
       Policies:
         - PolicyName: S3ListPolicy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
               - Effect: Allow
-                Action:
-                  - s3:ListAllMyBuckets
+                Action: s3:ListAllMyBuckets
                 Resource: "*"
 
   EC2Group:
@@ -52,9 +65,9 @@ Resources:
     Properties:
       GroupName: EC2Group
       ManagedPolicyArns:
-        - !Ref PasswordChangePolicy
+        - !Ref UserTempPassword
       Policies:
-        - PolicyName: EC2AccessPolicy
+        - PolicyName: EC2ActionPolicy
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -69,26 +82,6 @@ Resources:
                   - ec2:CreateTags
                 Resource: "*"
 
-  EC2ViewOnlyGroup:
-    Type: AWS::IAM::Group
-    Properties:
-      GroupName: EC2ViewOnlyGroup
-      ManagedPolicyArns:
-        - !Ref PasswordChangePolicy
-      Policies:
-        - PolicyName: EC2ViewOnlyPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - ec2:DescribeInstances
-                  - ec2:DescribeImages
-                  - ec2:DescribeKeyPairs
-                  - ec2:DescribeSecurityGroups
-                  - ec2:DescribeSubnets
-                Resource: "*"
-
   # -----------------------------
   # IAM Users
   # -----------------------------
@@ -96,6 +89,7 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: ec2-user1
+      Groups: [!Ref EC2Group]
       LoginProfile:
         Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
@@ -104,6 +98,9 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: ec2-user2
+      Groups: [!Ref EC2Group]
+      # Boundary prevents the 'ec2:RunInstances' granted by the group
+      PermissionsBoundary: !Ref EC2ViewOnlyBoundary
       LoginProfile:
         Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
@@ -112,31 +109,7 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       UserName: s3-user
+      Groups: [!Ref S3Group]
       LoginProfile:
         Password: "{{resolve:secretsmanager:lab-user-temp-password:SecretString:password}}"
         PasswordResetRequired: true
-
-  # -----------------------------
-  # Group Memberships
-  # -----------------------------
-  EC2User1Group:
-    Type: AWS::IAM::UserToGroupAddition
-    Properties:
-      GroupName: !Ref EC2Group
-      Users:
-        - !Ref EC2User1
-
-  EC2User2Group:
-    Type: AWS::IAM::UserToGroupAddition
-    Properties:
-      GroupName: !Ref EC2ViewOnlyGroup
-      Users:
-        - !Ref EC2User2
-
-  S3UserGroup:
-    Type: AWS::IAM::UserToGroupAddition
-    Properties:
-      GroupName: !Ref S3Group
-      Users:
-        - !Ref S3User
-
